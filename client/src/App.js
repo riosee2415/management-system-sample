@@ -20,37 +20,28 @@ const styles = theme => ({
   }
 });
 
-const customer = [
-  {
-    id: 1,
-    image:
-      "https://avatars2.githubusercontent.com/u/44108636?s=460&u=42afa365599d837455c04171238374a6e093cf08&v=4",
-    name: "윤상호",
-    birthday: "900224",
-    gender: "남자",
-    job: "개발자"
-  },
-  {
-    id: 2,
-    image:
-      "https://avatars2.githubusercontent.com/u/44108636?s=460&u=42afa365599d837455c04171238374a6e093cf08&v=4",
-    name: "김한주",
-    birthday: "971015",
-    gender: "여자",
-    job: "개발자"
-  },
-  {
-    id: 3,
-    image:
-      "https://avatars2.githubusercontent.com/u/44108636?s=460&u=42afa365599d837455c04171238374a6e093cf08&v=4",
-    name: "송성민",
-    birthday: "950724",
-    gender: "여자",
-    job: "개발자"
-  }
-];
-
 class App extends React.Component {
+  state = {
+    customers: ""
+  };
+
+  componentDidMount = () => {
+    this._callApi()
+      .then(res =>
+        this.setState({
+          customers: res
+        })
+      )
+      .catch(err => console.log(err + "Why?"));
+  };
+
+  _callApi = async () => {
+    const response = await fetch("/api/customers");
+    const body = await response.json();
+
+    return body;
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -69,19 +60,21 @@ class App extends React.Component {
           </TableHead>
 
           <TableBody>
-            {customer.map(c => {
-              return (
-                <Customer
-                  key={c.id}
-                  id={c.id}
-                  image={c.image}
-                  name={c.name}
-                  birthday={c.birthday}
-                  gender={c.gender}
-                  job={c.job}
-                />
-              );
-            })}
+            {this.state.customers
+              ? this.state.customers.map(c => {
+                  return (
+                    <Customer
+                      key={c.id}
+                      id={c.id}
+                      image={c.image}
+                      name={c.name}
+                      birthday={c.birthday}
+                      gender={c.gender}
+                      job={c.job}
+                    />
+                  );
+                })
+              : ""}
           </TableBody>
         </Table>
       </Paper>
